@@ -1,0 +1,62 @@
+import { fireEvent, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
+import { act } from '@testing-library/react'
+import App from '../src/App'
+
+describe('PatternLab learning interface', () => {
+  it('loads the default walkthrough and advances through real steps', () => {
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Maximum Sum Subarray' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Next step' }))
+    expect(screen.getByText(/STEP 02/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Go to step 9' }))
+    expect(screen.getByText('Sum 9')).toBeInTheDocument()
+  })
+  it('validates new input and lets the learner switch examples', () => {
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('Array input'), { target: { value: '1, 2' } })
+    fireEvent.change(screen.getByLabelText('Window K'), { target: { value: '1' } })
+    fireEvent.click(screen.getByRole('button', { name: /Run trace/ }))
+    expect(screen.getByRole('button', { name: 'Go to step 1' })).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Window K'), { target: { value: '99' } })
+    fireEvent.click(screen.getByRole('button', { name: /Run trace/ }))
+    expect(screen.getByRole('alert')).toHaveTextContent('K must be between')
+    fireEvent.change(screen.getByRole('combobox', { name: 'Select algorithm example' }), { target: { value: 'longest-substring' } })
+    expect(screen.getByLabelText('String input')).toHaveValue('abcabcbb')
+  })
+  it('supports play pause, reset, and selecting a timeline step', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Next step' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset playback' }))
+    expect(screen.getByText(/STEP 01/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Go to step 3' }))
+    expect(screen.getByText(/STEP 03/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Previous step' }))
+    expect(screen.getByText(/STEP 02/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Next step' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Play' }))
+    expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Pause' }))
+  })
+  it('supports keyboard step navigation and future-pattern placeholders', () => {
+    render(<App />)
+    fireEvent.keyDown(window, { key: 'ArrowRight' })
+    expect(screen.getByText(/STEP 02/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Two Pointers/ }))
+    expect(screen.getByText('Coming soon.')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'About PatternLab' }))
+    expect(screen.getByText(/Learn patterns/)).toBeInTheDocument()
+  })
+  it('does not let an old playback timer advance a newly generated trace', async () => {
+    vi.useFakeTimers()
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Play' }))
+    fireEvent.change(screen.getByLabelText('Array input'), { target: { value: '1, 2, 3' } })
+    fireEvent.change(screen.getByLabelText('Window K'), { target: { value: '2' } })
+    fireEvent.click(screen.getByRole('button', { name: /Run trace/ }))
+    expect(screen.getByText('1 / 6')).toBeInTheDocument()
+    await act(async () => { vi.advanceTimersByTime(2200) })
+    expect(screen.getByText('1 / 6')).toBeInTheDocument()
+    vi.useRealTimers()
+  })
+})
