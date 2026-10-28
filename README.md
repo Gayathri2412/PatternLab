@@ -1,6 +1,6 @@
 # PatternLab
 
-PatternLab is a free, open-source learning platform for coding interview patterns. It teaches by showing real algorithm state as you step through an example. Sliding Window and Two Pointers each have three interactive visualizations.
+PatternLab is a free, open-source learning platform for coding interview patterns. It teaches by showing real algorithm state as you step through an example. Sliding Window, Two Pointers, and Fast & Slow Pointers each have three interactive visualizations.
 
 ## Screenshots
 
@@ -13,6 +13,7 @@ Screenshots will be added after the first release. No screenshots are included y
 - Keyboard shortcuts: Space toggles playback; Left and Right Arrow move between steps. Shortcuts pause while focus is in an input, select, or text area.
 - Java reference implementations with stable trace-to-line IDs.
 - Two Pointers labs for sorted Two Sum II, Valid Palindrome, and Remove Duplicates from Sorted Array, with direction-aware and same-direction pointer traces.
+- Fast & Slow Pointers labs for linked-list cycle detection, linked-list midpoint, and Happy Number state-cycle detection.
 - Pattern guide, invariant explanations, complexity, learning recap, and curated problem links.
 - Responsive dark/light interface and placeholder navigation for future patterns.
 
@@ -38,7 +39,7 @@ pnpm lint       # ESLint
 
 ## Architecture
 
-`src/algorithms/slidingWindow.ts` and `src/algorithms/twoPointers.ts` contain pure algorithms that return results and typed ordered traces. `src/types/trace.ts` defines the Sliding Window trace contract; Two Pointers uses a suitable pattern-specific typed trace. `src/data/examples.ts` registers Sliding Window labs and Java reference code; `src/data/patterns.ts` registers available and coming-soon navigation entries. `src/App.tsx` hosts the shared application shell and preserves the established Sliding Window experience, while `src/TwoPointers.tsx` renders its pattern-specific trace and Java walkthrough inside that shell. Both use trace-driven playback with independent state and cleanup.
+`src/algorithms/slidingWindow.ts`, `src/algorithms/twoPointers.ts`, and `src/algorithms/fastSlowPointers.ts` contain pure algorithms that return results and typed ordered traces. `src/types/trace.ts` defines the Sliding Window trace contract; the other patterns use suitable pattern-specific trace models. `src/data/examples.ts` registers Sliding Window labs and Java reference code; `src/data/patterns.ts` registers available and coming-soon navigation entries. `src/App.tsx` hosts the shared application shell and preserves the established Sliding Window experience, while `src/TwoPointers.tsx` and `src/FastSlowPointers.tsx` render their pattern-specific traces, explanations, problems, and Java walkthroughs inside that shell. Each pattern keeps its own Visualizer, Explanation, and Problems tabs.
 
 ### Trace-driven visualizations
 
@@ -68,6 +69,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Use descriptive types, explain invariant
 ## Roadmap
 
 1. Persist optional local learning progress.
-2. Add more tests and visual walkthroughs as each pattern is implemented.
+2. Integrate Pattern 04: Merge Intervals.
+3. Add more tests and visual walkthroughs as each pattern is implemented.
 
 LeetCode® problem names and links refer to their original owners. PatternLab is an independent educational project and is not affiliated with LeetCode.

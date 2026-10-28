@@ -3,7 +3,7 @@ export type PatternRegistration = { id: string; number: string; title: string; s
 export const patternRegistry: PatternRegistration[] = [
   { id: 'sliding-window', number: '01', title: 'Sliding Window', status: 'available' },
   { id: 'two-pointers', number: '02', title: 'Two Pointers', status: 'available' },
-  { id: 'fast-slow-pointers', number: '03', title: 'Fast & Slow Pointers', status: 'coming-soon' },
+  { id: 'fast-slow-pointers', number: '03', title: 'Fast & Slow Pointers', status: 'available' },
   { id: 'merge-intervals', number: '04', title: 'Merge Intervals', status: 'coming-soon' },
   { id: 'cyclic-sort', number: '05', title: 'Cyclic Sort', status: 'coming-soon' },
   { id: 'in-place-reversal', number: '06', title: 'In-place Reversal', status: 'coming-soon' },

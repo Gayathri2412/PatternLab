@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { longestUniqueSubstring, maxSumSubarray, minSizeSubarray, parseIntegerArray } from '../src/algorithms/slidingWindow'
 import { parseTwoPointerArray, removeDuplicatesSorted, twoSumSorted, validPalindrome } from '../src/algorithms/twoPointers'
+import { detectLinkedListCycle, digitSquareSum, findListMiddle, isHappyNumber } from '../src/algorithms/fastSlowPointers'
 
 describe('trace-driven sliding window algorithms', () => {
   it('finds the default fixed window and handles edge cases', () => {
@@ -68,5 +69,39 @@ describe('Two Pointers algorithms and traces', () => {
     expect(()=>removeDuplicatesSorted([2,1])).toThrow(/sorted/)
     expect(()=>parseTwoPointerArray('')).toThrow()
     expect(parseTwoPointerArray('',true)).toEqual([])
+  })
+})
+
+describe('Fast & Slow Pointers algorithms and traces',()=>{
+  it('detects list cycles using node identity, including empty and self-loop lists',()=>{
+    expect(detectLinkedListCycle([3,2,0,-4],1).result).toBe(true)
+    expect(detectLinkedListCycle([1,2,3,4],null).result).toBe(false)
+    expect(detectLinkedListCycle([],null).result).toBe(false)
+    expect(detectLinkedListCycle([1],null).result).toBe(false)
+    expect(detectLinkedListCycle([1],0).result).toBe(true)
+    expect(detectLinkedListCycle([7,7],null).result).toBe(false)
+    expect(detectLinkedListCycle([7,7],1).steps.at(-1)).toMatchObject({phase:'meet',slow:1,fast:1,result:true})
+    expect(()=>detectLinkedListCycle([1,2],2)).toThrow(/destination/)
+    const trace=detectLinkedListCycle([3,2,0,-4],1)
+    expect(trace.steps.some(s=>s.transition==='slow: 2→3; fast: 1→3')).toBe(true)
+  })
+  it('finds first middle for odd lists and second middle for even lists',()=>{
+    expect(findListMiddle([1,2,3,4,5]).result).toBe(3)
+    expect(findListMiddle([1,2,3,4,5,6]).result).toBe(4)
+    expect(findListMiddle([]).result).toBe(null)
+    expect(findListMiddle([9]).result).toBe(9)
+    expect(()=>findListMiddle(Array.from({length:26},(_,i)=>i))).toThrow(/24/)
+  })
+  it('detects happy-number success and a repeated unhappy state',()=>{
+    expect(digitSquareSum(19)).toBe(82)
+    const happy=isHappyNumber(19)
+    expect(happy.result).toBe(true)
+    expect(happy.steps.some(s=>s.fast===1)).toBe(true)
+    expect(happy.steps.some(s=>s.calculation?.includes('68 → 100 → 1'))).toBe(true)
+    expect(happy.steps.at(-1)?.sequence).toEqual([19,82,68,100,1])
+    expect(isHappyNumber(2).result).toBe(false)
+    expect(isHappyNumber(1).result).toBe(true)
+    expect(()=>isHappyNumber(0)).toThrow(/positive/)
+    expect(()=>isHappyNumber(1_000_000_001)).toThrow(/1,000,000,000/)
   })
 })
